@@ -52,25 +52,24 @@
 
         <label>여행 테마</label>
         <div class="theme-toggle-group">
-        <input type="checkbox" id="theme1" name="theme" value="맛집">
-        <label for="theme1">맛집</label>
+          <input type="checkbox" id="theme1" name="theme" value="맛집">
+          <label for="theme1">맛집</label>
 
-        <input type="checkbox" id="theme2" name="theme" value="카페">
-        <label for="theme2">카페</label>
+          <input type="checkbox" id="theme2" name="theme" value="카페">
+          <label for="theme2">카페</label>
 
-        <input type="checkbox" id="theme3" name="theme" value="자연경관">
-        <label for="theme3">자연경관</label>
+          <input type="checkbox" id="theme3" name="theme" value="자연경관">
+          <label for="theme3">자연경관</label>
 
-        <input type="checkbox" id="theme4" name="theme" value="역사탐방">
-        <label for="theme4">역사탐방</label>
+          <input type="checkbox" id="theme4" name="theme" value="역사탐방">
+          <label for="theme4">역사탐방</label>
 
-        <input type="checkbox" id="theme5" name="theme" value="축제/이벤트">
-        <label for="theme5">축제/이벤트</label>
+          <input type="checkbox" id="theme5" name="theme" value="축제/이벤트">
+          <label for="theme5">축제/이벤트</label>
 
-        <input type="checkbox" id="theme6" name="theme" value="쇼핑">
-        <label for="theme6">쇼핑</label>
+          <input type="checkbox" id="theme6" name="theme" value="쇼핑">
+          <label for="theme6">쇼핑</label>
         </div>
-
 
         <label>추가 조건을 작성해 주세요</label>
         <textarea name="user_prompt" rows="4" placeholder="예: 첫날은 동궁과월지를 꼭 넣어주세요."></textarea>
@@ -82,3 +81,16 @@
     </div>
   </div>
 </div>
+
+<!-- 🔁 사이드바 토글 스크립트 -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebar-toggle');
+    if (sidebar && toggle) {
+      toggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+      });
+    }
+  });
+</script>
