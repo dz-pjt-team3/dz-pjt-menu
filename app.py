@@ -185,7 +185,7 @@ def cafe():
             places = [{"name": f"에러 발생: {e}", "address": ""}]
 
         # ✅ 유튜브 추천
-        youtube_videos = search_youtube_videos(f"{region} 카페")
+        youtube_videos = search_youtube_videos(f"{region} 카페 추천")
 
     return render_template("cafe.html",
                            places=places,
@@ -236,7 +236,7 @@ def acc():
             places = [{"name": f"에러 발생: {e}", "address": ""}]
 
         # ✅ 유튜브 숙소 추천
-        youtube_videos = search_youtube_videos(f"{region} 숙소")
+        youtube_videos = search_youtube_videos(f"{region} 숙소 추천")
 
     return render_template("acc.html",
                            places=places,
@@ -332,7 +332,7 @@ def search(category):
         places=places
     )
 
-def search_youtube_videos(query, max_results=5):
+def search_youtube_videos(query, max_results=6):
     api_key = os.environ["YOUTUBE_API_KEY"]
     url = "https://www.googleapis.com/youtube/v3/search"
     params = {

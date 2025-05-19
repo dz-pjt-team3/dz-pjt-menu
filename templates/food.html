@@ -31,20 +31,23 @@
     <div id="map" style="width: 100%; height: 500px;"></div>
   </div>
 
-  <!-- 🔹 오른쪽: GPT 유튜브 추천 -->
+<!-- 🔹 오른쪽: GPT 유튜브 추천 -->
 <div class="right-panel">
   <h3>유튜브 맛집 추천</h3>
-  <ul class="youtube-list">
+  <div class="youtube-list">
     {% for video in youtube_videos %}
-    <li style="margin-bottom: 16px;">
-      <a href="{{ video.url }}" target="_blank">
-        <img src="{{ video.thumbnail }}" width="100%" style="border-radius: 8px;"><br>
-        <strong>{{ video.title }}</strong>
-      </a>
-    </li>
+      <div class="youtube-card">
+        <a href="{{ video.url }}" target="_blank">
+          <img src="{{ video.thumbnail }}" alt="{{ video.title }}">
+        </a>
+        <p class="video-title">
+          <a href="{{ video.url }}" target="_blank">{{ video.title }}</a>
+        </p>
+      </div>
     {% endfor %}
-  </ul>
+  </div>
 </div>
+
 <!-- Kakao 지도 API 불러오기 -->
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey={{ kakao_key }}&autoload=false"></script>
 <script>
