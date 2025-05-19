@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <DZ_MINI_PROJECT_TEAM3>
 # 구성
 travelapp/
