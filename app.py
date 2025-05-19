@@ -134,7 +134,7 @@ def food():
             places = [{"name": f"에러 발생: {e}", "address": ""}]
 
         # ✅ 2. YouTube API 영상 검색 (GPT 제거)
-        youtube_videos = search_youtube_videos(f"{region} 맛집")
+        youtube_videos = search_youtube_videos(f"{region}맛집 강추")
 
     return render_template("food.html",
                            places=places,
