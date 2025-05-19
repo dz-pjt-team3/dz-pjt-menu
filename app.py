@@ -359,7 +359,6 @@ def search_youtube_videos(query, max_results=5):
             })
     return videos
 
-# test $$##@@!!$$%%
 
 if __name__ == "__main__":
     app.run(debug=True)
