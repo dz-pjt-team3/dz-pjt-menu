@@ -95,7 +95,6 @@ def search_category(category_code: str, region: str, size=15) -> list:
 def index():
     return render_template("index.html")
 
-# ✅ 음식점 페이지
 @app.route("/food", methods=["GET", "POST"])
 def food():
     places = []
@@ -117,14 +116,18 @@ def food():
             res.raise_for_status()
             data = res.json()
 
+            # ✅ 상세 정보 포함하여 리스트 생성
             places = [
                 {
-                    "name": doc["place_name"],
-                    "address": doc["road_address_name"],
-                    "lat": doc["y"],
-                    "lng": doc["x"]
+                    "name": doc.get("place_name", ""),
+                    "address": doc.get("road_address_name", ""),
+                    "lat": doc.get("y", ""),
+                    "lng": doc.get("x", ""),
+                    "category": doc.get("category_name", "정보 없음"),
+                    "phone": doc.get("phone", "정보 없음"),
+                    "url": doc.get("place_url", "#")
                 }
-                for doc in data["documents"]
+                for doc in data.get("documents", [])
             ]
 
             if places:
@@ -133,8 +136,8 @@ def food():
         except Exception as e:
             places = [{"name": f"에러 발생: {e}", "address": ""}]
 
-        # ✅ 2. YouTube API 영상 검색 (GPT 제거)
-        youtube_videos = search_youtube_videos(f"{region}맛집 강추")
+        # ✅ 2. YouTube API 영상 검색
+        youtube_videos = search_youtube_videos(f"{region} 맛집 강추")
 
     return render_template("food.html",
                            places=places,
@@ -150,13 +153,13 @@ def food():
 def cafe():
     places = []
     youtube_videos = []
-    center_lat = 37.5665  # 기본 중심 (서울)
+    center_lat = 37.5665
     center_lng = 126.9780
 
     if request.method == "POST":
         region = request.form.get("region")
 
-        # ✅ Kakao API로 카페 검색
+        # ✅ Kakao API 카페 검색
         REST_KEY = os.environ["KAKAO_REST_API_KEY"]
         url = "https://dapi.kakao.com/v2/local/search/keyword.json"
         headers = {"Authorization": f"KakaoAK {REST_KEY}"}
@@ -167,24 +170,27 @@ def cafe():
             res.raise_for_status()
             data = res.json()
 
+            # ✅ 상세 정보 포함하여 리스트 생성
             places = [
                 {
-                    "name": doc["place_name"],
-                    "address": doc["road_address_name"],
-                    "lat": doc["y"],
-                    "lng": doc["x"]
+                    "name": doc.get("place_name", ""),
+                    "address": doc.get("road_address_name", ""),
+                    "lat": doc.get("y", ""),
+                    "lng": doc.get("x", ""),
+                    "category": doc.get("category_name", "정보 없음"),
+                    "phone": doc.get("phone", "정보 없음"),
+                    "url": doc.get("place_url", "#")
                 }
-                for doc in data["documents"]
+                for doc in data.get("documents", [])
             ]
 
             if places:
                 center_lat = float(places[0]["lat"])
                 center_lng = float(places[0]["lng"])
-
         except Exception as e:
             places = [{"name": f"에러 발생: {e}", "address": ""}]
 
-        # ✅ 유튜브 추천
+        # ✅ 유튜브 카페 영상 추천
         youtube_videos = search_youtube_videos(f"{region} 카페 추천")
 
     return render_template("cafe.html",
@@ -195,19 +201,20 @@ def cafe():
                            center_lng=center_lng)
 
 
-# ✅ 숙소 페이지
+
+
 # ✅ 숙소 페이지
 @app.route("/acc", methods=["GET", "POST"])
 def acc():
     places = []
     youtube_videos = []
-    center_lat = 37.5665  # 기본 중심 (서울)
+    center_lat = 37.5665  # 서울 기본 좌표
     center_lng = 126.9780
 
     if request.method == "POST":
         region = request.form.get("region")
 
-        # ✅ Kakao API로 숙소 검색
+        # ✅ Kakao API 숙소 검색
         REST_KEY = os.environ["KAKAO_REST_API_KEY"]
         url = "https://dapi.kakao.com/v2/local/search/keyword.json"
         headers = {"Authorization": f"KakaoAK {REST_KEY}"}
@@ -218,24 +225,27 @@ def acc():
             res.raise_for_status()
             data = res.json()
 
+            # ✅ 상세 정보 포함하여 리스트 생성
             places = [
                 {
-                    "name": doc["place_name"],
-                    "address": doc["road_address_name"],
-                    "lat": doc["y"],
-                    "lng": doc["x"]
+                    "name": doc.get("place_name", ""),
+                    "address": doc.get("road_address_name", ""),
+                    "lat": doc.get("y", ""),
+                    "lng": doc.get("x", ""),
+                    "category": doc.get("category_name", "정보 없음"),
+                    "phone": doc.get("phone", "정보 없음"),
+                    "url": doc.get("place_url", "#")
                 }
-                for doc in data["documents"]
+                for doc in data.get("documents", [])
             ]
 
             if places:
                 center_lat = float(places[0]["lat"])
                 center_lng = float(places[0]["lng"])
-
         except Exception as e:
             places = [{"name": f"에러 발생: {e}", "address": ""}]
 
-        # ✅ 유튜브 숙소 추천
+        # ✅ 유튜브 숙소 영상 추천
         youtube_videos = search_youtube_videos(f"{region} 숙소 추천")
 
     return render_template("acc.html",

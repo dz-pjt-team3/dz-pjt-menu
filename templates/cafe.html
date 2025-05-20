@@ -7,11 +7,11 @@
 
 {% block content %}
 <div class="grid-layout">
-  <!-- 🔹 왼쪽: 입력창 + 카페 리스트 -->
+  <!-- 🔹 왼쪽: 지역 입력 + 카페 리스트 -->
   <div class="left-panel">
     <h3>지역 입력</h3>
     <form method="POST">
-      <input type="text" name="region" placeholder="예: 서울 성수동" required>
+      <input type="text" name="region" placeholder="예: 홍대입구역" required>
       <button type="submit">검색</button>
     </form>
 
@@ -25,17 +25,25 @@
     </ul>
   </div>
 
-  <!-- 🔹 가운데: 카카오 지도 -->
+  <!-- 🔹 가운데: 지도 + 카페 상세 정보 -->
   <div class="center-panel">
     <h3>지도</h3>
     <div id="map" style="width: 100%; height: 500px;"></div>
+
+    <div id="info-box" style="display:none; margin-top: 20px; padding: 16px; background: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <h3 id="info-name"></h3>
+      <p><strong>주소:</strong> <span id="info-address"></span></p>
+      <p><strong>전화:</strong> <span id="info-phone"></span></p>
+      <p><strong>종류:</strong> <span id="info-category"></span></p>
+      <p><strong>링크:</strong> <a id="info-link" href="#" target="_blank">카카오맵에서 보기</a></p>
+    </div>
   </div>
 
-<!-- 🔹 오른쪽: 유튜브 카페 추천 -->
-<div class="right-panel">
-  <h3>유튜브 카페 추천</h3>
-  <div class="youtube-list">
-    {% for video in youtube_videos %}
+  <!-- 🔹 오른쪽: GPT 유튜브 추천 -->
+  <div class="right-panel">
+    <h3>유튜브 카페 추천</h3>
+    <div class="youtube-list">
+      {% for video in youtube_videos %}
       <div class="youtube-card">
         <a href="{{ video.url }}" target="_blank">
           <img src="{{ video.thumbnail }}" alt="{{ video.title }}">
@@ -44,35 +52,41 @@
           <a href="{{ video.url }}" target="_blank">{{ video.title }}</a>
         </p>
       </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
   </div>
 </div>
 
-
-<!-- Kakao 지도 API -->
+<!-- ✅ Kakao 지도 JS -->
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey={{ kakao_key }}&autoload=false"></script>
 <script>
 kakao.maps.load(function () {
   const mapContainer = document.getElementById('map');
-  const center = new kakao.maps.LatLng({{ center_lat }}, {{ center_lng }}); 
+  const center = new kakao.maps.LatLng({{ center_lat }}, {{ center_lng }});
   const map = new kakao.maps.Map(mapContainer, {
     center: center,
     level: 5
   });
 
   const markerList = [];
+  const places = {{ places | tojson | safe }};
 
-  document.querySelectorAll('.place-item').forEach((item, index) => {
+  function showInfoBox(place) {
+    document.getElementById("info-name").innerText = place.name;
+    document.getElementById("info-address").innerText = place.address || "정보 없음";
+    document.getElementById("info-phone").innerText = place.phone || "정보 없음";
+    document.getElementById("info-link").href = place.url || "#";
+    document.getElementById("info-box").style.display = "block";
+    document.getElementById("info-category").innerText = place.category || "정보 없음";
+  }
+
+  document.querySelectorAll('.place-item').forEach(item => {
     const lat = parseFloat(item.dataset.lat);
     const lng = parseFloat(item.dataset.lng);
     const name = item.querySelector('strong').innerText;
 
     const pos = new kakao.maps.LatLng(lat, lng);
-
-    const marker = new kakao.maps.Marker({
-      map: map,
-      position: pos
-    });
+    const marker = new kakao.maps.Marker({ map: map, position: pos });
 
     const info = new kakao.maps.InfoWindow({
       content: `<div style="padding:6px;font-size:13px;"><b>${name}</b></div>`
@@ -80,14 +94,12 @@ kakao.maps.load(function () {
 
     markerList.push({ marker, info });
 
-    // 첫 번째 마커 자동 오픈
-    if (index === 0) {
-      info.open(map, marker);
-    }
-
     kakao.maps.event.addListener(marker, 'click', () => {
       markerList.forEach(m => m.info.close());
       info.open(map, marker);
+
+      const matched = places.find(p => parseFloat(p.lat) === lat && parseFloat(p.lng) === lng);
+      if (matched) showInfoBox(matched);
     });
 
     item.addEventListener('click', () => {
@@ -95,6 +107,9 @@ kakao.maps.load(function () {
       map.setLevel(4);
       markerList.forEach(m => m.info.close());
       info.open(map, marker);
+
+      const matched = places.find(p => parseFloat(p.lat) === lat && parseFloat(p.lng) === lng);
+      if (matched) showInfoBox(matched);
     });
   });
 });
