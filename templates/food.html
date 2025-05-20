@@ -11,8 +11,18 @@
   <div class="left-panel">
     <h3>지역 입력</h3>
     <form method="POST">
-      <input type="text" name="region" placeholder="예: 서울 강남역" required>
+      <input type="text" name="region" placeholder="예: 서울 강남역" value="{{ region }}" required>
+      <select name="category">
+        <option value="" {% if not selected_category %}selected{% endif %}>(선택사항) 음식 종류</option>
+        <option value="한식" {% if selected_category == "한식" %}selected{% endif %}>한식</option>
+        <option value="중식" {% if selected_category == "중식" %}selected{% endif %}>중식</option>
+        <option value="양식" {% if selected_category == "양식" %}selected{% endif %}>양식</option>
+        <option value="일식" {% if selected_category == "일식" %}selected{% endif %}>일식</option>
+        <option value="분식" {% if selected_category == "분식" %}selected{% endif %}>분식</option>
+      </select>
+      <div style="text-align: right;">
       <button type="submit">검색</button>
+      </div>
     </form>
 
     <ul class="place-list">

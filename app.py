@@ -95,28 +95,35 @@ def search_category(category_code: str, region: str, size=15) -> list:
 def index():
     return render_template("index.html")
 
+# ✅ 음식점 페이지
 @app.route("/food", methods=["GET", "POST"])
 def food():
     places = []
     youtube_videos = []
     center_lat = 37.5665
     center_lng = 126.9780
+    selected_category = ""  # ✅ 선택된 카테고리 UI에서 유지하기 위함
+    region = ""
 
     if request.method == "POST":
         region = request.form.get("region")
+        category = request.form.get("category")  # ✅ select box에서 받은 값
+        selected_category = category  # UI에 다시 넘겨주기 위함
+
+        # ✅ 검색어 조합 (예: 서울 을지로 + 양식)
+        search_query = f"{region} {category}".strip() if category else region
 
         # ✅ 1. Kakao API 음식점 검색
-        REST_KEY = os.environ["KAKAO_REST_API_KEY"]
-        url = "https://dapi.kakao.com/v2/local/search/keyword.json"
-        headers = {"Authorization": f"KakaoAK {REST_KEY}"}
-        params = {"query": f"{region} 맛집", "size": 10}
-
         try:
+            REST_KEY = os.environ["KAKAO_REST_API_KEY"]
+            url = "https://dapi.kakao.com/v2/local/search/keyword.json"
+            headers = {"Authorization": f"KakaoAK {REST_KEY}"}
+            params = {"query": f"{search_query} 맛집", "size": 10}
+
             res = requests.get(url, headers=headers, params=params)
             res.raise_for_status()
             data = res.json()
 
-            # ✅ 상세 정보 포함하여 리스트 생성
             places = [
                 {
                     "name": doc.get("place_name", ""),
@@ -133,18 +140,22 @@ def food():
             if places:
                 center_lat = float(places[0]["lat"])
                 center_lng = float(places[0]["lng"])
+
         except Exception as e:
             places = [{"name": f"에러 발생: {e}", "address": ""}]
 
-        # ✅ 2. YouTube API 영상 검색
-        youtube_videos = search_youtube_videos(f"{region} 맛집 강추")
+        # ✅ 2. YouTube API도 같은 검색어로
+        youtube_videos = search_youtube_videos(f"{search_query} 맛집 추천")
 
     return render_template("food.html",
                            places=places,
                            youtube_videos=youtube_videos,
                            kakao_key=os.environ["KAKAO_JAVASCRIPT_KEY"],
                            center_lat=center_lat,
-                           center_lng=center_lng)
+                           center_lng=center_lng,
+                           selected_category=selected_category,
+                           region=region
+                           )
 
 
 
