@@ -11,8 +11,18 @@
   <div class="left-panel">
     <h3>지역 입력</h3>
     <form method="POST">
-      <input type="text" name="region" placeholder="예: 부산 해운대" required>
+      <input type="text" name="region" placeholder="예: 부산 해운대" value="{{ region }}" required>
+      <select name="category">
+        <option value="" {% if not selected_category %}selected{% endif %}>(선택사항) 숙소 종류</option>
+        <option value="호텔" {% if selected_category == "호텔" %}selected{% endif %}>호텔</option>
+        <option value="모텔" {% if selected_category == "모텔" %}selected{% endif %}>모텔</option>
+        <option value="리조트" {% if selected_category == "리조트" %}selected{% endif %}>리조트</option>
+        <option value="펜션" {% if selected_category == "펜션" %}selected{% endif %}>펜션</option>
+        <option value="게스트하우스스" {% if selected_category == "게스트하우스" %}selected{% endif %}>게스트하우스</option>
+      </select>
+      <div style="text-align: right;">
       <button type="submit">검색</button>
+      </div>
     </form>
 
     <ul class="place-list">
